@@ -1,0 +1,32 @@
+body{
+    display: flex;
+    justify-content: center;
+}
+table {
+    
+    margin-top: 50px;
+    border: 20px solid rgb(129, 84, 1);
+}
+.white-cell {
+    background: rgb(204, 204, 204);
+    width: 75px;
+    height: 75px;
+}
+.black-cell {
+    background: rgb(92, 92, 92);
+    width: 75px;
+    height: 75px;
+}
+.selected{
+    background: rgba(142, 230, 142, 0.6);
+}
+img{
+    width: 75px;
+
+}
+.possibleMove{
+    background: rgb(154, 216, 255);
+}
+.possibleEat{
+    background: rgb(156, 40, 40);
+}

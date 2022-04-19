@@ -1,0 +1,123 @@
+body {
+    background: white;
+    font-family: sans-serif;
+    font-size: 20px;
+    direction: rtl;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  
+  }
+  p, table, ul{
+    width: 40%;
+    margin: 0px;
+  }
+  .firstline{
+    width: 80%;
+    height: 20%;
+  }
+  h2, h1, h4{
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+    width: 40%;
+    margin-bottom: 0px;
+  }
+  .content{
+    width: 10%;
+    align-content: flex-end;
+    border: 1px solid gray;
+    background-color: lightgray;
+    margin-left: 700px;
+    margin-bottom: 20px;
+  }
+  .apple-table{
+    width: 10%;
+    height: 100%;
+    border: 1px solid gray;
+    text-align: center;
+    float: left;
+    margin-right: 20px;
+  }
+  .first-part{
+    display: flex;
+    width: 40%;
+    height: 11%;
+  }
+  hr {
+    border: 0;
+    clear:both;
+    display:block;
+    background-color: black;
+    width: 40%;               
+    height: 1px;
+  }
+  .first-header{
+    width: 45%;
+  }
+  .table-pictures{
+    width: 100px;
+    height: 100px;
+  }
+  
+  .second-part{
+    display: flex;
+    justify-content: center;
+    width: 80%;
+    text-align: center;
+  }
+  .apple-tree{
+    width: 222px;
+    height: 148px;
+    border: 1px solid black;
+    background-color: lightblue;
+    float: left;
+  }
+  .lotof-apples{
+    width: 202px;
+    height: 302px;
+    border: 1px solid black;
+    background-color: lightblue;
+    float: left;
+  }
+  .third-part{
+    display: flex;
+    justify-content: center;
+    width: 80%;
+    height: 11%;
+  }
+  .apple-table1{
+    width: 70%;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    float: center;
+    margin-left: 300px;
+  }
+  .infobox{
+    background-color: #f9f9f9;
+    text-align: center;
+    width: 30%;
+    border: 1px solid lightgray;
+    float: left;
+    margin-right: 20px;
+  }
+  .liner{
+    background: #ffecb2;
+  }
+  .info-tablehead{
+    background-color: #ffecb2;
+  }
+  .fourth-part{
+    display: flex;
+    width: 40%;
+    height: 5%;
+  }
+  .fourth-line{
+    width: 80%;
+    height: 20%;
+  }
+  .fifth-part{
+   margin-right: 800px;
+  }
+  
