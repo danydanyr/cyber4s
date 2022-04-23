@@ -2,6 +2,7 @@
 //global varibales declerations
 let selectedCell;
 let pieces = [];
+let currentPiece;
 const WHITE_PLAYER = 'white';
 const BLACK_PLAYER = 'black';
 const WHITE_STARTING_ROW = 0;
@@ -31,19 +32,17 @@ function newChess() {
         }
     }
     createInitialBoard();
-    // for (let piece of pieces) {
-    //     addImage(table1.rows[piece.row].cells[piece.col], piece.player, piece.type);
-    // }
     for(i = 0; i < 8; i++){
         for(j = 0; j < 8; j++){
             if(pieces[i][j] == undefined) continue;
-            addImage(htmlTable.rows[i].cells[j], pieces[i][j].player, pieces[i][j].type);
+            addPieceImg(htmlTable.rows[i].cells[j], pieces[i][j].player, pieces[i][j].type);
         }
     }
 }
 
 function knightPaintPossibleMovement(row, col, color){
     //all knight possible moves in this 2 arrays
+    //Possible Math.abs() solution (2x =y, 2y=x)
     let xArray = [ 2, 1, -1, -2, -2, -1, 1, 2 ];
     let yArray = [ 1, 2, 2, 1, -1, -2, -2, -1 ];
     let x, y;
@@ -162,16 +161,13 @@ function isPointInBounds(x, y){
     return (x >= 0 && y >= 0 && x < TABLE_SIZE && y < TABLE_SIZE);
 }
 
-function addImage(cell, player, name) {
-    const image = document.createElement('img');
-    image.src = 'images/' + player + '_' + name + '.png';
-    cell.appendChild(image);
-}
 
+//TODO add first move for pawn and king
 class Piece {
     constructor(type, player) {
       this.type = type;
       this.player = player;
+      //this.isFirstMove
     }
 }
 
@@ -211,28 +207,72 @@ function addPieces(color){
 
 function onCellClick(e) {
     
-    for (let i = 0; i < TABLE_SIZE; i++) {
-        for (let j = 0; j < TABLE_SIZE; j++) {
-          htmlTable.rows[i].cells[j].classList.remove('possibleMove');
-          htmlTable.rows[i].cells[j].classList.remove('possibleEat');
-        }
-    }
+    
 
-    if(e.currentTarget.classList.contains("selected") == true){
-        e.currentTarget.classList.remove('selected');
-        selectedCell = undefined;
-    }
-    else{
-        if(selectedCell != undefined){ //unselecting old cell
-            selectedCell.classList.remove('selected'); 
-        }
-
+    if(selectedCell === undefined && pieces[e.currentTarget.parentNode.rowIndex][e.currentTarget.cellIndex] !== undefined){
         e.currentTarget.classList.add('selected');
         selectedCell = e.currentTarget;
     }
+    else if(e.currentTarget.classList.contains('possibleMove')){
+        let row = selectedCell.parentNode.rowIndex;
+        let col = selectedCell.cellIndex;
+        pieces[row][col] = undefined;
+        deletePieceImg(htmlTable.rows[row].cells[col]);
+        selectedCell = e.currentTarget;
+        row = selectedCell.parentNode.rowIndex;
+        col = selectedCell.cellIndex
+        pieces[row][col] = currentPiece;
+        addPieceImg(htmlTable.rows[row].cells[col], pieces[row][col].player, pieces[row][col].type);
+        for (let i = 0; i < TABLE_SIZE; i++) {
+            for (let j = 0; j < TABLE_SIZE; j++) {
+              htmlTable.rows[i].cells[j].classList.remove('selected');
+              htmlTable.rows[i].cells[j].classList.remove('possibleMove');
+              htmlTable.rows[i].cells[j].classList.remove('possibleEat');
+            }
+        }
+        selectedCell = undefined;
+    }
+    else if(e.currentTarget.classList.contains('possibleEat')){
+        let row = selectedCell.parentNode.rowIndex;
+        let col = selectedCell.cellIndex;
+        pieces[row][col] = undefined;
+        deletePieceImg(htmlTable.rows[row].cells[col]);
+        selectedCell = e.currentTarget;
+        row = selectedCell.parentNode.rowIndex;
+        col = selectedCell.cellIndex
+        pieces[row][col] = currentPiece;
+        deletePieceImg(htmlTable.rows[row].cells[col]);
+        addPieceImg(htmlTable.rows[row].cells[col], pieces[row][col].player, pieces[row][col].type);
+        for (let i = 0; i < TABLE_SIZE; i++) {
+            for (let j = 0; j < TABLE_SIZE; j++) {
+              htmlTable.rows[i].cells[j].classList.remove('selected');
+              htmlTable.rows[i].cells[j].classList.remove('possibleMove');
+              htmlTable.rows[i].cells[j].classList.remove('possibleEat');
+            }
+        }
+        selectedCell = undefined;
+    }
+    else if(e.currentTarget.classList.contains("selected")){
+        e.currentTarget.classList.remove('selected');
+        selectedCell = undefined;
+    }
+
+    // for (let i = 0; i < TABLE_SIZE; i++) {
+    //     for (let j = 0; j < TABLE_SIZE; j++) {
+    //       htmlTable.rows[i].cells[j].classList.remove('possibleMove');
+    //       htmlTable.rows[i].cells[j].classList.remove('possibleEat');
+    //     //   htmlTable.rows[i].cells[j].classList.remove('selected');
+    //     }
+    // }
+    
+
+    
+    
+    
+    //need to change it so that it will remember the piece i selected before clickin on possible move
     if(selectedCell !== undefined){
     
-    let currentPiece = pieces[selectedCell.parentNode.rowIndex][selectedCell.cellIndex];
+    currentPiece = pieces[selectedCell.parentNode.rowIndex][selectedCell.cellIndex];
     if(currentPiece === undefined){
         return;
     }
@@ -265,6 +305,14 @@ function paintPossibleEnemyMove(row, col){
 }
 function unpaintPossibleMove(cell){
     cell.currentTarget.classList.remove('selected');
+}
+function addPieceImg(cell, player, name) {
+    const image = document.createElement('img');
+    image.src = 'images/' + player + '_' + name + '.png';
+    cell.appendChild(image);
+}
+function deletePieceImg(cell){
+    cell.innerHTML = "";
 }
 
 window.addEventListener('load', newChess);

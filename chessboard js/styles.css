@@ -21,7 +21,10 @@ table {
     background: rgba(142, 230, 142, 0.6);
 }
 img{
-    width: 75px;
+    width: 70px;
+    /* direction: flex;
+    align-items: center;
+    justify-content: center; */
 
 }
 .possibleMove{
