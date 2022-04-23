@@ -9,46 +9,29 @@ const WHITE_STARTING_ROW = 0;
 const BLACK_STARTING_ROW = 7;
 const htmlTable = document.createElement('table');
 const TABLE_SIZE = 8;
-//code to access a cell in the table
+const knightXArray = [ 2, 1, -1, -2, -2, -1, 1, 2 ]; //all knight possible moves in this 2 arrays
+const knightYArray = [ 1, 2, 2, 1, -1, -2, -2, -1 ];
+const bishopXArray = [ 1, -1, 1, -1];                //all bishop possible movies in this 2 arrays
+const bishopYArray = [ 1, -1, -1, 1];
+const rookXArray = [ 1, -1, 0, 0];                   //all rook possible moves in this 2 arrays
+const rookYArray = [ 0, 0, -1, 1];
+const kingXArray = [ 1, -1, 0, 0, 1, -1, 1, -1];     //all king possible moves in this 2 arrays
+const kingYArray = [ 0, 0, -1, 1, 1, -1, -1, 1];
+let currentTurn = BLACK_PLAYER;
 //selectedCell.cellIndex
 //selectedCell.parentNode.rowIndex
 
 
 //functions declarations
 
-function newChess() {
-    
-    document.body.appendChild(htmlTable);
-    for(let i = 0; i < 8; i++){
-        const row = htmlTable.insertRow();
-        for(let j = 0; j < 8; j++){
-            const cell =row.insertCell();
-            if((i + j) % 2 == 0) 
-                cell.className = 'white-cell';
-            else
-                cell.className = 'black-cell';
-            
-                cell.addEventListener('click', onCellClick);
-        }
-    }
-    createInitialBoard();
-    for(i = 0; i < 8; i++){
-        for(j = 0; j < 8; j++){
-            if(pieces[i][j] == undefined) continue;
-            addPieceImg(htmlTable.rows[i].cells[j], pieces[i][j].player, pieces[i][j].type);
-        }
-    }
-}
+
 
 function knightPaintPossibleMovement(row, col, color){
-    //all knight possible moves in this 2 arrays
     //Possible Math.abs() solution (2x =y, 2y=x)
-    let xArray = [ 2, 1, -1, -2, -2, -1, 1, 2 ];
-    let yArray = [ 1, 2, 2, 1, -1, -2, -2, -1 ];
     let x, y;
-    for(let i = 0; i < xArray.length; i++){
-        x = row + xArray[i];
-        y = col + yArray[i];
+    for(let i = 0; i < knightXArray.length; i++){
+        x = row + knightXArray[i];
+        y = col + knightYArray[i];
         if(isPointInBounds(x, y)){
             if(pieces[x][y] && pieces[x][y].player !== color) {
                 paintPossibleEnemyMove(x,y);
@@ -61,13 +44,10 @@ function knightPaintPossibleMovement(row, col, color){
     }
 }
 function bishopPaintPossibleMovement(row, col, color){
-    //all bishop possible movies in this 2 arrays
-    let xArray = [ 1, -1, 1, -1];
-    let yArray = [ 1, -1, -1, 1];
     let x, y;
-    for(let i = 0; i < xArray.length; i++){
-        x = row + xArray[i];
-        y = col + yArray[i];
+    for(let i = 0; i < bishopXArray.length; i++){
+        x = row + bishopXArray[i];
+        y = col + bishopYArray[i];
         for(let j = 0; j < TABLE_SIZE; j++){
             if (!isPointInBounds(x, y)) break;  
             if(pieces[x][y] && pieces[x][y].player !== color) {
@@ -77,20 +57,17 @@ function bishopPaintPossibleMovement(row, col, color){
             else if(pieces[x][y] && pieces[x][y].player === color) break;  
             //else if the cell is empty
             paintPossibleMove(x,y);
-            x += xArray[i];
-            y += yArray[i];
+            x += bishopXArray[i];
+            y += bishopYArray[i];
         }
     }
 }
 
 function rookPaintPossibleMovement(row, col, color){
-    //all rook possible moves in this 2 arrays
-    let xArray = [ 1, -1, 0, 0];
-    let yArray = [ 0, 0, -1, 1];
     let x, y;
-    for(let i = 0; i < xArray.length; i++){
-        x = row + xArray[i];
-        y = col + yArray[i];
+    for(let i = 0; i < rookXArray.length; i++){
+        x = row + rookXArray[i];
+        y = col + rookYArray[i];
         for(let j = 0; j < TABLE_SIZE; j++){
             if (!isPointInBounds(x, y)) break;   
             if(pieces[x][y] && pieces[x][y].player !== color) {
@@ -100,19 +77,16 @@ function rookPaintPossibleMovement(row, col, color){
             else if(pieces[x][y] && pieces[x][y].player === color) break;
             //else if the cell is empty
             paintPossibleMove(x,y);
-            x += xArray[i];
-            y += yArray[i];
+            x += rookXArray[i];
+            y += rookYArray[i];
         }
     }
 }
 
 function kingPaintPossibleMovement(row, col, color){
-    //all king possible moves in this 2 arrays
-    let xArray = [ 1, -1, 0, 0, 1, -1, 1, -1];
-    let yArray = [ 0, 0, -1, 1, 1, -1, -1, 1];
-    for(let i = 0; i < xArray.length; i++){
-        x = row + xArray[i];
-        y = col + yArray[i];
+    for(let i = 0; i < kingXArray.length; i++){
+        x = row + kingXArray[i];
+        y = col + kingYArray[i];
         if(isPointInBounds(x, y)){
             if(pieces[x][y] && pieces[x][y].player !== color) {
                 paintPossibleEnemyMove(x,y);
@@ -157,10 +131,40 @@ function pawnPaintPossibleMovement(row, col, color){
     }
 }
 
-function isPointInBounds(x, y){
-    return (x >= 0 && y >= 0 && x < TABLE_SIZE && y < TABLE_SIZE);
-}
 
+class BoardData{
+    constructor(){
+
+    }
+    createInitialBoard() {
+        //initialising the pieces matrix
+        for(let i = 0; i < TABLE_SIZE; i++){
+            pieces[i] = [];
+        }
+    }
+    initChessGame() {
+    document.body.appendChild(htmlTable);
+    for(let i = 0; i < 8; i++){
+        const row = htmlTable.insertRow();
+        for(let j = 0; j < 8; j++){
+            const cell =row.insertCell();
+            if((i + j) % 2 == 0) 
+                cell.className = 'white-cell';
+            else
+                cell.className = 'black-cell';
+            
+                cell.addEventListener('click', onCellClick);
+        }
+    }
+    createInitialBoard();
+    for(let i = 0; i < 8; i++){
+        for(let j = 0; j < 8; j++){
+            if(pieces[i][j] == undefined) continue;
+            addPieceImg(htmlTable.rows[i].cells[j], pieces[i][j].player, pieces[i][j].type);
+        }
+    }
+}
+}
 
 //TODO add first move for pawn and king
 class Piece {
@@ -207,11 +211,31 @@ function addPieces(color){
 
 function onCellClick(e) {
     
-    
-
-    if(selectedCell === undefined && pieces[e.currentTarget.parentNode.rowIndex][e.currentTarget.cellIndex] !== undefined){
+    if(selectedCell === undefined && pieces[e.currentTarget.parentNode.rowIndex][e.currentTarget.cellIndex] !== undefined && currentTurn === pieces[e.currentTarget.parentNode.rowIndex][e.currentTarget.cellIndex].player){
         e.currentTarget.classList.add('selected');
         selectedCell = e.currentTarget;
+        currentPiece = pieces[e.currentTarget.parentNode.rowIndex][e.currentTarget.cellIndex];
+        if(currentPiece === undefined){
+            return;
+        }
+        else if(currentPiece.type === 'rook'){
+            rookPaintPossibleMovement(selectedCell.parentNode.rowIndex, selectedCell.cellIndex, currentPiece.player);
+        }
+        else if(currentPiece.type === 'pawn'){
+            pawnPaintPossibleMovement(selectedCell.parentNode.rowIndex, selectedCell.cellIndex, currentPiece.player);
+        }
+        else if(currentPiece.type === 'knight'){
+            knightPaintPossibleMovement(selectedCell.parentNode.rowIndex, selectedCell.cellIndex, currentPiece.player);
+        }
+        else if(currentPiece.type === 'bishop'){
+            bishopPaintPossibleMovement(selectedCell.parentNode.rowIndex, selectedCell.cellIndex, currentPiece.player);
+        }
+        else if(currentPiece.type === 'king'){
+            kingPaintPossibleMovement(selectedCell.parentNode.rowIndex, selectedCell.cellIndex, currentPiece.player);
+        }
+        else if(currentPiece.type === 'queen'){
+            queenPaintPossibleMovement(selectedCell.parentNode.rowIndex, selectedCell.cellIndex, currentPiece.player);
+        }    
     }
     else if(e.currentTarget.classList.contains('possibleMove')){
         let row = selectedCell.parentNode.rowIndex;
@@ -223,14 +247,9 @@ function onCellClick(e) {
         col = selectedCell.cellIndex
         pieces[row][col] = currentPiece;
         addPieceImg(htmlTable.rows[row].cells[col], pieces[row][col].player, pieces[row][col].type);
-        for (let i = 0; i < TABLE_SIZE; i++) {
-            for (let j = 0; j < TABLE_SIZE; j++) {
-              htmlTable.rows[i].cells[j].classList.remove('selected');
-              htmlTable.rows[i].cells[j].classList.remove('possibleMove');
-              htmlTable.rows[i].cells[j].classList.remove('possibleEat');
-            }
-        }
+        unpaintAllCells();
         selectedCell = undefined;
+        passTheTurn();
     }
     else if(e.currentTarget.classList.contains('possibleEat')){
         let row = selectedCell.parentNode.rowIndex;
@@ -243,68 +262,32 @@ function onCellClick(e) {
         pieces[row][col] = currentPiece;
         deletePieceImg(htmlTable.rows[row].cells[col]);
         addPieceImg(htmlTable.rows[row].cells[col], pieces[row][col].player, pieces[row][col].type);
-        for (let i = 0; i < TABLE_SIZE; i++) {
-            for (let j = 0; j < TABLE_SIZE; j++) {
-              htmlTable.rows[i].cells[j].classList.remove('selected');
-              htmlTable.rows[i].cells[j].classList.remove('possibleMove');
-              htmlTable.rows[i].cells[j].classList.remove('possibleEat');
-            }
-        }
+        unpaintAllCells();
         selectedCell = undefined;
+        passTheTurn();
     }
     else if(e.currentTarget.classList.contains("selected")){
         e.currentTarget.classList.remove('selected');
+        unpaintAllCells();
         selectedCell = undefined;
     }
-
-    // for (let i = 0; i < TABLE_SIZE; i++) {
-    //     for (let j = 0; j < TABLE_SIZE; j++) {
-    //       htmlTable.rows[i].cells[j].classList.remove('possibleMove');
-    //       htmlTable.rows[i].cells[j].classList.remove('possibleEat');
-    //     //   htmlTable.rows[i].cells[j].classList.remove('selected');
-    //     }
-    // }
-    
-
-    
-    
-    
-    //need to change it so that it will remember the piece i selected before clickin on possible move
-    if(selectedCell !== undefined){
-    
-    currentPiece = pieces[selectedCell.parentNode.rowIndex][selectedCell.cellIndex];
-    if(currentPiece === undefined){
-        return;
-    }
-    else if(currentPiece.type === 'rook'){
-        rookPaintPossibleMovement(selectedCell.parentNode.rowIndex, selectedCell.cellIndex, currentPiece.player);
-    }
-    else if(currentPiece.type === 'pawn'){
-        pawnPaintPossibleMovement(selectedCell.parentNode.rowIndex, selectedCell.cellIndex, currentPiece.player);
-    }
-    else if(currentPiece.type === 'knight'){
-        knightPaintPossibleMovement(selectedCell.parentNode.rowIndex, selectedCell.cellIndex, currentPiece.player);
-    }
-    else if(currentPiece.type === 'bishop'){
-        bishopPaintPossibleMovement(selectedCell.parentNode.rowIndex, selectedCell.cellIndex, currentPiece.player);
-    }
-    else if(currentPiece.type === 'king'){
-        kingPaintPossibleMovement(selectedCell.parentNode.rowIndex, selectedCell.cellIndex, currentPiece.player);
-    }
-    else if(currentPiece.type === 'queen'){
-        queenPaintPossibleMovement(selectedCell.parentNode.rowIndex, selectedCell.cellIndex, currentPiece.player);
-    }   
 }
 
-}
+
 function paintPossibleMove(row, col){
     htmlTable.rows[row].cells[col].classList.add('possibleMove');
 }
 function paintPossibleEnemyMove(row, col){
     htmlTable.rows[row].cells[col].classList.add('possibleEat');
 }
-function unpaintPossibleMove(cell){
-    cell.currentTarget.classList.remove('selected');
+function unpaintAllCells(){
+    for (let i = 0; i < TABLE_SIZE; i++) {
+        for (let j = 0; j < TABLE_SIZE; j++) {
+          htmlTable.rows[i].cells[j].classList.remove('selected');
+          htmlTable.rows[i].cells[j].classList.remove('possibleMove');
+          htmlTable.rows[i].cells[j].classList.remove('possibleEat');
+        }
+    }
 }
 function addPieceImg(cell, player, name) {
     const image = document.createElement('img');
@@ -314,5 +297,12 @@ function addPieceImg(cell, player, name) {
 function deletePieceImg(cell){
     cell.innerHTML = "";
 }
+function isPointInBounds(x, y){
+    return (x >= 0 && y >= 0 && x < TABLE_SIZE && y < TABLE_SIZE);
+}
+function passTheTurn(){
+    currentTurn = currentTurn === BLACK_PLAYER ? WHITE_PLAYER : BLACK_PLAYER;
+}
 
-window.addEventListener('load', newChess);
+game = new BoardData() 
+window.addEventListener('load', game.initChessGame);
