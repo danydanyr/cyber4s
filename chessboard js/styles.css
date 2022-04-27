@@ -33,3 +33,20 @@ img{
 .possibleEat{
     background: rgb(156, 40, 40);
 }
+.winner-dialog {
+    position: absolute;
+    left: 50%;
+    top: 41%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 100px;
+    border-radius: 10px;
+    width: max-content;
+    font-size: 30px;
+  }
+  .button{
+    font-size: 27px;
+    position: absolute;
+    left: 34%;
+    top: 69%;
+  }
