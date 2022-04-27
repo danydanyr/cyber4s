@@ -17,20 +17,14 @@ const rookXArray = [1, -1, 0, 0];                   //all rook possible moves in
 const rookYArray = [0, 0, -1, 1];
 const kingXArray = [1, -1, 0, 0, 1, -1, 1, -1];     //all king possible moves in this 2 arrays
 const kingYArray = [0, 0, -1, 1, 1, -1, -1, 1];
-let currentTurn = WHITE_PLAYER;
 
 
 function onCellClick(e) {
-
-    if (selectedCell === undefined && pieces[e.currentTarget.parentNode.rowIndex][e.currentTarget.cellIndex] !== undefined && currentTurn === pieces[e.currentTarget.parentNode.rowIndex][e.currentTarget.cellIndex].player) {
+    if (selectedCell === undefined && pieces[e.currentTarget.parentNode.rowIndex][e.currentTarget.cellIndex] !== undefined && game.currentTurn === pieces[e.currentTarget.parentNode.rowIndex][e.currentTarget.cellIndex].player) {
         e.currentTarget.classList.add('selected');
         selectedCell = e.currentTarget;
         currentPiece = pieces[e.currentTarget.parentNode.rowIndex][e.currentTarget.cellIndex];
-        //feel like i'm going to need this
-/*         if (currentPiece === undefined) {
-            return;
-        }
-        else */ 
+
         if (currentPiece.type === 'rook') {
             rookPaintPossibleMovement(selectedCell.parentNode.rowIndex, selectedCell.cellIndex, currentPiece.player);
         }
@@ -87,7 +81,7 @@ function onCellClick(e) {
         unpaintAllCells();
         selectedCell = undefined;
     } */
-    else if (selectedCell !== undefined && pieces[e.currentTarget.parentNode.rowIndex][e.currentTarget.cellIndex] !== undefined && currentTurn === pieces[e.currentTarget.parentNode.rowIndex][e.currentTarget.cellIndex].player) {
+    else if (selectedCell !== undefined && pieces[e.currentTarget.parentNode.rowIndex][e.currentTarget.cellIndex] !== undefined && game.currentTurn === pieces[e.currentTarget.parentNode.rowIndex][e.currentTarget.cellIndex].player) {
         unpaintAllCells();
         selectedCell = undefined;
         onCellClick(e);
@@ -113,13 +107,13 @@ function deletePieceImg(cell) {
     cell.innerHTML = "";
 }
 function passTheTurn() {
-    currentTurn = currentTurn === BLACK_PLAYER ? WHITE_PLAYER : BLACK_PLAYER;
+    game.currentTurn = game.currentTurn === BLACK_PLAYER ? WHITE_PLAYER : BLACK_PLAYER;
     document.body.style.backgroundColor = document.body.style.backgroundColor === 'black' ? 'white' : 'black';
 }
 function didIWin(){
     if(game.lastEatenPiece === 'king'){
         const winnerPopup = document.createElement('div');
-        const winner = currentTurn.charAt(0).toUpperCase() + currentTurn.slice(1);
+        const winner = game.currentTurn.charAt(0).toUpperCase() + game.currentTurn.slice(1);
         winnerPopup.textContent = winner + ' is the bigger nerd!';
         winnerPopup.classList.add('winner-dialog');
         button = document. createElement("BUTTON");

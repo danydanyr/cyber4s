@@ -2,6 +2,7 @@
 class BoardData {
     constructor() {
         this.lastEatenPiece = undefined;
+        this.currentTurn = WHITE_PLAYER;
     }
     createInitialBoard() {
         //initialising the pieces matrix
