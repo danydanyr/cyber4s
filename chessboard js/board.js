@@ -5,8 +5,8 @@ let currentPiece;
 let button;
 const WHITE_PLAYER = 'white';
 const BLACK_PLAYER = 'black';
-const WHITE_STARTING_ROW = 0;
-const BLACK_STARTING_ROW = 7;
+const WHITE_STARTING_ROW = 7;
+const BLACK_STARTING_ROW = 0;
 const htmlTable = document.createElement('table');
 const TABLE_SIZE = 8;
 const knightXArray = [2, 1, -1, -2, -2, -1, 1, 2]; //all knight possible moves in this 2 arrays
@@ -23,7 +23,7 @@ function onCellClick(e) {
     if (selectedCell === undefined && pieces[e.currentTarget.parentNode.rowIndex][e.currentTarget.cellIndex] !== undefined && game.currentTurn === pieces[e.currentTarget.parentNode.rowIndex][e.currentTarget.cellIndex].player) {
         e.currentTarget.classList.add('selected');
         selectedCell = e.currentTarget;
-        currentPiece = pieces[e.currentTarget.parentNode.rowIndex][e.currentTarget.cellIndex];
+        currentPiece = pieces[selectedCell.parentNode.rowIndex][selectedCell.cellIndex];
 
         if (currentPiece.type === 'rook') {
             rookPaintPossibleMovement(selectedCell.parentNode.rowIndex, selectedCell.cellIndex, currentPiece.player);
@@ -45,25 +45,28 @@ function onCellClick(e) {
         }
     }
     else if (e.currentTarget.classList.contains('possibleMove')) {
-        let row = selectedCell.parentNode.rowIndex;
+        let row = selectedCell.parentNode.rowIndex; //selectedCell contains the cell of the piece from the previous click
         let col = selectedCell.cellIndex;
         pieces[row][col] = undefined;
         deletePieceImg(htmlTable.rows[row].cells[col]);
-        selectedCell = e.currentTarget;
+        selectedCell = e.currentTarget; //now selectedCell contains the clicked on cell
         row = selectedCell.parentNode.rowIndex;
         col = selectedCell.cellIndex
         pieces[row][col] = currentPiece;
         addPieceImg(htmlTable.rows[row].cells[col], pieces[row][col].player, pieces[row][col].type);
         unpaintAllCells();
+        if(pieces[row][col].type === 'pawn' && pieces[row][col].firstMove){ // removes ability to move 2 tiles for pawns after first move
+            pieces[row][col].firstMove = false;
+        }
         selectedCell = undefined;
         passTheTurn();
     }
     else if (e.currentTarget.classList.contains('possibleEat')) {
-        let row = selectedCell.parentNode.rowIndex;
+        let row = selectedCell.parentNode.rowIndex; //selectedCell contains the cell of the piece from the previous click
         let col = selectedCell.cellIndex;
         pieces[row][col] = undefined;
         deletePieceImg(htmlTable.rows[row].cells[col]);
-        selectedCell = e.currentTarget;
+        selectedCell = e.currentTarget; //now selectedCell contains the clicked on cell
         row = selectedCell.parentNode.rowIndex;
         col = selectedCell.cellIndex;
         game.lastEatenPiece = pieces[row][col].type; //saves the last eaten piece
@@ -72,15 +75,19 @@ function onCellClick(e) {
         addPieceImg(htmlTable.rows[row].cells[col], pieces[row][col].player, pieces[row][col].type);
         unpaintAllCells();
         didIWin(); //checks if the king was eaten;
+        if(pieces[row][col].type === 'pawn' && pieces[row][col].firstMove){ // removes ability to move 2 tiles for pawns after first move
+            pieces[row][col].firstMove = false;
+        }
         selectedCell = undefined;
         passTheTurn();
     }
     //this is for unselecting a piece. don't really know if i should keep this feature in the game ¯\_(ツ)_/¯
-/*     else if (e.currentTarget.classList.contains("selected")) {
+    else if (e.currentTarget.classList.contains("selected")) {
         e.currentTarget.classList.remove('selected');
         unpaintAllCells();
         selectedCell = undefined;
-    } */
+    }
+    //when clicking on a piece while another one is already selected
     else if (selectedCell !== undefined && pieces[e.currentTarget.parentNode.rowIndex][e.currentTarget.cellIndex] !== undefined && game.currentTurn === pieces[e.currentTarget.parentNode.rowIndex][e.currentTarget.cellIndex].player) {
         unpaintAllCells();
         selectedCell = undefined;
@@ -101,6 +108,7 @@ function unpaintAllCells() {
 function addPieceImg(cell, player, name) {
     const image = document.createElement('img');
     image.src = 'images/' + player + '_' + name + '.png';
+    image.draggable = false;
     cell.appendChild(image);
 }
 function deletePieceImg(cell) {
@@ -116,7 +124,7 @@ function didIWin(){
         const winner = game.currentTurn.charAt(0).toUpperCase() + game.currentTurn.slice(1);
         winnerPopup.textContent = winner + ' is the bigger nerd!';
         winnerPopup.classList.add('winner-dialog');
-        button = document. createElement("BUTTON");
+        button = document.createElement("BUTTON");
         button.innerHTML = "Play Again?";
         button.classList.add('button');
         button.addEventListener("click", reloadgame);

@@ -1,13 +1,11 @@
-//TODO add first move for pawn and king for double pawn move and hatzraha
 class Piece {
     constructor(type, player) {
         this.type = type;
         this.player = player;
-        //this.isFirstMove
+        this.firstMove = true; //giving this attribute to every piece, but accessing it only with pawn
     }
 }
 function knightPaintPossibleMovement(row, col, color) {
-    //Possible Math.abs() solution (2x =y, 2y=x)
     let x, y;
     for (let i = 0; i < knightXArray.length; i++) {
         x = row + knightXArray[i];
@@ -87,14 +85,23 @@ function queenPaintPossibleMovement(row, col, color) {
 }
 
 function pawnPaintPossibleMovement(row, col, color) {
-    if (color === WHITE_PLAYER) {
+    if (color === BLACK_PLAYER) {
         if (pieces[row + 1][col + 1] && pieces[row + 1][col + 1].player !== color) {
             paintPossibleEnemyMove(row + 1, col + 1);
         }
         if (pieces[row + 1][col - 1] && pieces[row + 1][col - 1].player !== color) {
             paintPossibleEnemyMove(row + 1, col - 1);
         }
-        if (pieces[row + 1][col] === undefined)
+        if(pieces[row][col].firstMove){
+            if (pieces[row + 1][col] === undefined && pieces[row + 2][col] === undefined){
+            paintPossibleMove(row + 1, col);
+            paintPossibleMove(row + 2, col);
+            }
+            else if(pieces[row + 1][col] === undefined && pieces[row + 2][col] !== undefined){
+                paintPossibleMove(row + 1, col);
+            }
+        }
+        else if (pieces[row + 1][col] === undefined)
             paintPossibleMove(row + 1, col);
     }
     //else if the pawn is black
@@ -105,7 +112,16 @@ function pawnPaintPossibleMovement(row, col, color) {
         if (pieces[row - 1][col + 1] && pieces[row - 1][col + 1].player !== color) {
             paintPossibleEnemyMove(row - 1, col + 1);
         }
-        if (pieces[row - 1][col] === undefined)
+        if(pieces[row][col].firstMove){
+            if (pieces[row - 1][col] === undefined && pieces[row - 2][col] === undefined){
+            paintPossibleMove(row - 1, col);
+            paintPossibleMove(row - 2, col);
+            }
+            else if(pieces[row - 1][col] === undefined && pieces[row - 2][col] !== undefined){
+                paintPossibleMove(row - 1, col);
+            }
+        }
+        else if (pieces[row - 1][col] === undefined)
             paintPossibleMove(row - 1, col);
     }
 }

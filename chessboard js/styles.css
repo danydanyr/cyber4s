@@ -11,11 +11,13 @@ table {
     background: rgb(204, 204, 204);
     width: 75px;
     height: 75px;
+    user-select: none;
 }
 .black-cell {
     background: rgb(92, 92, 92);
     width: 75px;
     height: 75px;
+    user-select: none;
 }
 .selected{
     background: rgba(142, 230, 142, 0.6);

@@ -1,4 +1,3 @@
-
 class BoardData {
     constructor() {
         this.lastEatenPiece = undefined;
@@ -27,7 +26,7 @@ class BoardData {
         createInitialBoard();
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
-                if (pieces[i][j] == undefined) continue;
+                if (pieces[i][j] === undefined) continue;
                 addPieceImg(htmlTable.rows[i].cells[j], pieces[i][j].player, pieces[i][j].type);
             }
         }
@@ -50,8 +49,8 @@ function createInitialBoard() {
     }
     addPieces(BLACK_PLAYER);
     for (let i = 0; i < 8; i++) {
-        pieces[1][i] = new Piece("pawn", WHITE_PLAYER);
-        pieces[6][i] = new Piece("pawn", BLACK_PLAYER);
+        pieces[6][i] = new Piece("pawn", WHITE_PLAYER);
+        pieces[1][i] = new Piece("pawn", BLACK_PLAYER);
     }
 }
 function addPieces(color) {
