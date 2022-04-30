@@ -55,7 +55,7 @@ function onCellClick(e) {
         pieces[row][col] = currentPiece;
         addPieceImg(htmlTable.rows[row].cells[col], pieces[row][col].player, pieces[row][col].type);
         unpaintAllCells();
-        if(pieces[row][col].type === 'pawn' && pieces[row][col].firstMove){ // removes ability to move 2 tiles for pawns after first move
+        if (pieces[row][col].type === 'pawn' && pieces[row][col].firstMove) { // removes ability to move 2 tiles for pawns after first move
             pieces[row][col].firstMove = false;
         }
         selectedCell = undefined;
@@ -75,7 +75,7 @@ function onCellClick(e) {
         addPieceImg(htmlTable.rows[row].cells[col], pieces[row][col].player, pieces[row][col].type);
         unpaintAllCells();
         didIWin(); //checks if the king was eaten;
-        if(pieces[row][col].type === 'pawn' && pieces[row][col].firstMove){ // removes ability to move 2 tiles for pawns after first move
+        if (pieces[row][col].type === 'pawn' && pieces[row][col].firstMove) { // removes ability to move 2 tiles for pawns after first move
             pieces[row][col].firstMove = false;
         }
         selectedCell = undefined;
@@ -118,8 +118,9 @@ function passTheTurn() {
     game.currentTurn = game.currentTurn === BLACK_PLAYER ? WHITE_PLAYER : BLACK_PLAYER;
     document.body.style.backgroundColor = document.body.style.backgroundColor === 'black' ? 'white' : 'black';
 }
-function didIWin(){
-    if(game.lastEatenPiece === 'king'){
+function didIWin() {
+    if (game.lastEatenPiece === 'king') {
+        rainConfetti();
         const winnerPopup = document.createElement('div');
         const winner = game.currentTurn.charAt(0).toUpperCase() + game.currentTurn.slice(1);
         winnerPopup.textContent = winner + ' is the bigger nerd!';
@@ -130,13 +131,48 @@ function didIWin(){
         button.addEventListener("click", reloadgame);
         htmlTable.appendChild(winnerPopup);
         winnerPopup.appendChild(button);
+
         //to disable clicking on pieces
-        for(let i=0; i< TABLE_SIZE; i++) {
-              pieces[i] = undefined;
+        for (let i = 0; i < TABLE_SIZE; i++) {
+            pieces[i] = undefined;
         }
     }
 }
-function reloadgame(){
+function rainConfetti() {
+    let end = Date.now() + (3 * 1000); //run for 3 seconds
+
+    let colors = ['#9B5DE5', '#00BBF9', '#FEE440'];
+
+    (function frame() {
+        confetti({
+            particleCount: 3,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 },
+            colors: colors
+        });
+        confetti({
+            particleCount: 3,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 },
+            colors: colors
+        });
+        confetti({
+            particleCount: 3,
+            angle: 180,
+            spread: 55,
+            origin: { x: 2 },
+            colors: colors
+        });
+
+        if (Date.now() < end) {
+            requestAnimationFrame(frame);
+        }
+    }());
+}
+
+function reloadgame() {
     window.location.reload();
 }
 game = new BoardData()

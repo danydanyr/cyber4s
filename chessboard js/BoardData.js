@@ -10,6 +10,7 @@ class BoardData {
         }
     }
     initChessGame() {
+
         document.body.appendChild(htmlTable);
         for (let i = 0; i < 8; i++) {
             const row = htmlTable.insertRow();

@@ -4,7 +4,8 @@ body{
 }
 table {
     
-    margin-top: 50px;
+    position: absolute;
+    top: 15%;
     border: 20px solid rgb(129, 84, 1);
 }
 .white-cell {
