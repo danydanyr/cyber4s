@@ -74,7 +74,8 @@ function onCellClick(e) {
         deletePieceImg(htmlTable.rows[row].cells[col]);
         addPieceImg(htmlTable.rows[row].cells[col], pieces[row][col].player, pieces[row][col].type);
         unpaintAllCells();
-        didIWin(); //checks if the king was eaten;
+        if (didIWin()) //checks if the king was eaten and stops everything after
+            return;
         if (pieces[row][col].type === 'pawn' && pieces[row][col].firstMove) { // removes ability to move 2 tiles for pawns after first move
             pieces[row][col].firstMove = false;
         }
@@ -136,8 +137,10 @@ function didIWin() {
         for (let i = 0; i < TABLE_SIZE; i++) {
             pieces[i] = undefined;
         }
+        return true;
     }
 }
+//the confetti :D
 function rainConfetti() {
     let end = Date.now() + (3 * 1000); //run for 3 seconds
 
